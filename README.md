@@ -4,6 +4,7 @@
 
 ## Getting Started
 
+- `echo "API_KEY={your api key}" > .env`
 - `yarn`
 - `yarn start`
 
