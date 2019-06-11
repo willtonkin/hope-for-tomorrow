@@ -21,10 +21,12 @@ export function fetchData() {
 
     try {
       const carbonIntensityLatestData = await carbonIntensityLatest();
+      const powerConsumptionBreakdownLatestData = await powerConsumptionBreakdownLatest();
 
       dispatch({
         type: REQUEST_SUCCEEDED,
-        data: carbonIntensityLatestData,
+        carbonIntensityLatestData,
+        powerConsumptionBreakdownLatestData,
         receivedAt: Date.now()
       });
     } catch (err) {

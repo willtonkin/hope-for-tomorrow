@@ -6,11 +6,12 @@ import {
 } from "./actions";
 
 const initialState = {
-  data: {},
+  carbonIntensityLatestData: {},
   errorMessage: "",
   isFetching: false,
   isError: false,
   lastUpdated: 0,
+  powerConsumptionBreakdownLatestData: {},
   text: ""
 };
 
@@ -25,21 +26,22 @@ export default function reducer(state = initialState, action) {
         ...state,
         isFetching: true
       };
-      case REQUEST_SUCCEEDED:
-        return {
-          ...state,
-          data: action.data,
-          isError: false,
-          isFetching: false,
-          lastUpdated: Date.now()
-        };
-        case REQUEST_FAILED:
-          return {
-            ...state,
-            errorMessage: action.message,
-            isFetching: false,
-            isError: true
-          };
+    case REQUEST_SUCCEEDED:
+      return {
+        ...state,
+        carbonIntensityLatestData: action.carbonIntensityLatestData,
+        isError: false,
+        isFetching: false,
+        lastUpdated: Date.now(),
+        powerConsumptionBreakdownLatestData: action.powerConsumptionBreakdownLatestData
+      };
+    case REQUEST_FAILED:
+      return {
+        ...state,
+        errorMessage: action.message,
+        isFetching: false,
+        isError: true
+      };
     default:
       return state;
   }
