@@ -2,6 +2,7 @@ import {
   carbonIntensityLatest,
   powerConsumptionBreakdownLatest
 } from "./api/endpoints";
+import { getLocationAsync } from "./location";
 
 export const UPDATE_TEXT_VALUE = "UPDATE_TEXT_VALUE";
 export const REQUEST_STARTED = "REQUEST_STARTED";
@@ -19,9 +20,30 @@ export function fetchData() {
   return async dispatch => {
     dispatch({ type: REQUEST_STARTED });
 
+    let location = null;
     try {
-      const carbonIntensityLatestData = await carbonIntensityLatest();
-      const powerConsumptionBreakdownLatestData = await powerConsumptionBreakdownLatest();
+      location = await getLocationAsync();
+    } catch {
+      // allowed to fail
+    }
+
+    try {
+      let carbonIntensityLatestData;
+      let powerConsumptionBreakdownLatestData;
+
+      if (location) {
+        carbonIntensityLatestData = await carbonIntensityLatest(
+          location.lat,
+          location.lon
+        );
+        powerConsumptionBreakdownLatestData = await powerConsumptionBreakdownLatest(
+          location.lat,
+          location.lon
+        );
+      } else {
+        carbonIntensityLatestData = await carbonIntensityLatest();
+        powerConsumptionBreakdownLatestData = await powerConsumptionBreakdownLatest();
+      }
 
       dispatch({
         type: REQUEST_SUCCEEDED,

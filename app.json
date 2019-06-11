@@ -23,6 +23,9 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "android": {
+      "permissions": ["access_coarse_location"]
+    },
     "ios": {
       "supportsTablet": true
     }
