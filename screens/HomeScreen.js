@@ -1,7 +1,9 @@
+import { LinearGradient } from 'expo-linear-gradient'
 import * as WebBrowser from "expo-web-browser";
 import React from "react";
 import {
   Image,
+  ImageBackground,
   Platform,
   RefreshControl,
   ScrollView,
@@ -12,13 +14,10 @@ import {
 } from "react-native";
 import { connect } from "react-redux";
 
-import TestComponent from "../components/TestComponent";
-import { MonoText } from "../components/StyledText";
-import CarbonIntensity from "../components/CarbonIntensity";
-import PowerConsumptionBreakdown from "../components/PowerConsumptionBreakdown";
-
 import { fetchData } from "../actions";
 import { zoneShortName } from "../api/constants";
+import CarbonIntensity from "../components/CarbonIntensity";
+import PowerConsumptionBreakdown from "../components/PowerConsumptionBreakdown";
 
 function getZoneTitle(zone) {
   if (zone in zoneShortName) {
@@ -37,7 +36,16 @@ function HomeScreen({
   zone
 }) {
   return (
-    <View style={styles.container}>
+    <View style={styles.outerContainer}>
+      <ImageBackground
+        source={require("../assets/images/header-wind.jpg")}
+        style={styles.headerBackgroundImage}
+      >
+        <LinearGradient
+          colors={["transparent", "rgba(255,255,255,1)"]}
+          style={styles.headerGradient}
+        />
+      </ImageBackground>
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
@@ -48,41 +56,32 @@ function HomeScreen({
           />
         }
       >
-        <View style={styles.welcomeContainer}>
-          <Image
-            source={
-              __DEV__
-                ? require("../assets/images/robot-dev.png")
-                : require("../assets/images/robot-prod.png")
-            }
-            style={styles.welcomeImage}
-          />
-        </View>
-
         <View style={styles.centeredContainer}>
+          {zone && (
+            <Text style={styles.headlineText}>{getZoneTitle(zone)}</Text>
+          )}
           <Text style={styles.getStartedText}>
             See how clean your local energy is
-            {zone && <> in {getZoneTitle(zone)}</>}
           </Text>
-
-          <Text style={styles.getStartedText}>Current Carbon Intensity</Text>
         </View>
 
-        <View style={styles.centeredContainer}>
-          <CarbonIntensity />
+        <View style={styles.sectionContainer}>
+          <Text style={styles.subheadingText}>Current Carbon Intensity</Text>
+          <View style={styles.centeredContainer}>
+            <CarbonIntensity />
+          </View>
         </View>
 
-        <View style={styles.centeredContainer}>
-          <Text style={styles.getStartedText}>Power Consumption</Text>
-        </View>
-
-        <View>
+        <View style={styles.sectionContainer}>
+          <Text style={styles.subheadingText}>Power Consumption</Text>
           <PowerConsumptionBreakdown />
         </View>
 
         <View style={styles.helpContainer}>
           {lastUpdated > 0 && (
-            <Text style={styles.lastUpdatedText}>last updated at {lastUpdated}.</Text>
+            <Text style={styles.lastUpdatedText}>
+              last updated at {new Date(lastUpdated).toTimeString()}.
+            </Text>
           )}
         </View>
 
@@ -117,28 +116,41 @@ function handleFindOutPress() {
 }
 
 const styles = StyleSheet.create({
+  outerContainer: { flex: 1 },
   container: {
     flex: 1,
-    backgroundColor: "#fff"
+    marginTop: -200
   },
   contentContainer: {
-    paddingTop: 30
-  },
-  welcomeContainer: {
-    alignItems: "center",
-    marginTop: 10,
-    marginBottom: 20
-  },
-  welcomeImage: {
-    width: 100,
-    height: 80,
-    resizeMode: "contain",
-    marginTop: 3,
-    marginLeft: -10
+    paddingTop: 150
   },
   centeredContainer: {
     alignItems: "center",
     marginHorizontal: 50
+  },
+  headerBackgroundImage: {
+    width: "100%",
+    height: 200
+  },
+  headerGradient: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    height: 200
+  },
+  headlineText: {
+    color: "rgba(50,50,50, 1)",
+    fontSize: 32,
+    textAlign: "center"
+  },
+  sectionContainer: {
+    paddingTop: 32
+  },
+  subheadingText: {
+    fontSize: 24,
+    color: "rgba(50,50,50, 1)",
+    textAlign: "center"
   },
   getStartedText: {
     fontSize: 17,
@@ -170,9 +182,6 @@ const styles = StyleSheet.create({
     fontSize: 17,
     color: "rgba(96,100,109, 1)",
     textAlign: "center"
-  },
-  navigationFilename: {
-    marginTop: 5
   },
   helpContainer: {
     marginTop: 15,

@@ -1,5 +1,5 @@
 import React from "react";
-import { Dimensions, StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import { connect } from "react-redux";
 
 function colorTemperature(carbonIntensity) {
@@ -21,20 +21,18 @@ function CarbonIntensity({ carbonIntensity }) {
 
 const styles = StyleSheet.create({
   container: {
-    
     borderRadius: 16,
     padding: 16,
     width: "auto",
     justifyContent: "center",
-    alignItems: "center"},
+    alignItems: "center"
+  },
   intensityText: {
     fontSize: 28
   }
 });
 
 function mapStateToProps(state) {
-  console.log(state.carbonIntensityLatestData);
-
   if (!("carbonIntensity" in state.carbonIntensityLatestData)) {
     return { carbonIntensity: 0 };
   }
