@@ -59,8 +59,6 @@ const styles = StyleSheet.create({
 });
 
 function mapStateToProps(state) {
-  console.log(state.powerConsumptionBreakdownLatestData);
-
   if (
     !(
       "fossilFreePercentage" in state.powerConsumptionBreakdownLatestData ||
@@ -74,7 +72,7 @@ function mapStateToProps(state) {
     fossilFreePercentage,
     renewablePercentage
   } = state.powerConsumptionBreakdownLatestData;
-  console.log("nope");
+
   return { fossilFreePercentage, renewablePercentage };
 }
 
