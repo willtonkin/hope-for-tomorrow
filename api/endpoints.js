@@ -1,37 +1,44 @@
-export const carbonIntensityLatest = async () => {
-  await new Promise(acc => setTimeout(acc, 5000));
+import { API_KEY } from 'react-native-dotenv'
 
-  return {
-    zone: "GB",
-    carbonIntensity: 213,
-    datetime: "2019-06-11T06:42:23.639Z",
-    updatedAt: "2019-06-11T06:42:24.076Z"
-  };
+const fetchConfig = {
+  method: "GET",
+  headers: { "auth-token": API_KEY }
 };
 
-export const powerConsumptionBreakdownLatest = async () => {
-  await new Promise(acc => setTimeout(acc, 1000));
+export const carbonIntensityLatest = async (lat, lon) => {
+  const url = new URL(
+    "https://api.electricitymap.org/v3/carbon-intensity/latest"
+  );
 
-  return {
-    zone: "DE",
-    powerConsumptionBreakdown: {
-      biomass: 5193,
-      coal: 16170,
-      gas: 6529,
-      hydro: 3456,
-      "hydro discharge": 3364,
-      nuclear: 8254,
-      oil: 322,
-      solar: 3119,
-      wind: 7928,
-      geothermal: 3,
-      unknown: 1040,
-      "battery discharge": null
-    },
-    datetime: "2019-06-11T06:33:44.735Z",
-    fossilFreePercentage: 50,
-    renewablePercentage: 36,
-    powerConsumptionTotal: 55376,
-    updatedAt: "2019-06-11T06:33:46.538Z"
-  };
+  if (typeof lat === "number" && typeof lon === "number") {
+    const params = { lat, lon };
+    Object.keys(params).forEach(key =>
+      url.searchParams.append(key, params[key])
+    );
+  }
+
+  try {
+    return await fetch(url, fetchConfig).then(response => response.json());
+  } catch (e) {
+    throw new Error("Failed to get latest carbon intensity", e);
+  }
+};
+
+export const powerConsumptionBreakdownLatest = async (lat, lon) => {
+  const url = new URL(
+    "https://api.electricitymap.org/v3/power-consumption-breakdown/latest"
+  );
+
+  if (typeof lat === "number" && typeof lon === "number") {
+    const params = { lat, lon };
+    Object.keys(params).forEach(key =>
+      url.searchParams.append(key, params[key])
+    );
+  }
+
+  try {
+    return await fetch(url, fetchConfig).then(response => response.json());
+  } catch (e) {
+    throw new Error("Failed to get latest carbon consumption breakdown", e);
+  }
 };

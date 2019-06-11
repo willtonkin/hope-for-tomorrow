@@ -3,24 +3,50 @@ import React from "react";
 import {
   Image,
   Platform,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View
 } from "react-native";
+import { connect } from "react-redux";
 
 import TestComponent from "../components/TestComponent";
 import { MonoText } from "../components/StyledText";
 import CarbonIntensity from "../components/CarbonIntensity";
 import PowerConsumptionBreakdown from "../components/PowerConsumptionBreakdown";
 
-export default function HomeScreen() {
+import { fetchData } from "../actions";
+import { zoneShortName } from "../api/constants";
+
+function getZoneTitle(zone) {
+  if (zone in zoneShortName) {
+    return zoneShortName[zone].zoneName;
+  }
+
+  return null;
+}
+
+function HomeScreen({
+  dispatch,
+  errorMessage,
+  isError,
+  isFetching,
+  lastUpdated,
+  zone
+}) {
   return (
     <View style={styles.container}>
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
+        refreshControl={
+          <RefreshControl
+            refreshing={isFetching}
+            onRefresh={() => dispatch(fetchData())}
+          />
+        }
       >
         <View style={styles.welcomeContainer}>
           <Image
@@ -33,21 +59,31 @@ export default function HomeScreen() {
           />
         </View>
 
-        <View>
-          <TestComponent />
+        <View style={styles.centeredContainer}>
+          <Text style={styles.getStartedText}>
+            See how clean your local energy is
+            {zone && <> in {getZoneTitle(zone)}</>}
+          </Text>
+
+          <Text style={styles.getStartedText}>Current Carbon Intensity</Text>
         </View>
 
-        <View>
+        <View style={styles.centeredContainer}>
           <CarbonIntensity />
         </View>
+
+        <View style={styles.centeredContainer}>
+          <Text style={styles.getStartedText}>Power Consumption</Text>
+        </View>
+
         <View>
           <PowerConsumptionBreakdown />
         </View>
 
-        <View style={styles.getStartedContainer}>
-          <Text style={styles.getStartedText}>
-            See how clean your local energy is
-          </Text>
+        <View style={styles.helpContainer}>
+          {lastUpdated > 0 && (
+            <Text style={styles.lastUpdatedText}>last updated at {lastUpdated}.</Text>
+          )}
         </View>
 
         <View style={styles.helpContainer}>
@@ -62,11 +98,12 @@ export default function HomeScreen() {
         </View>
       </ScrollView>
 
-      <View style={styles.tabBarInfoContainer}>
-        <Text style={styles.tabBarInfoText}>
-          This is a tab bar. You can edit it in:
-        </Text>
-      </View>
+      {isError && (
+        <View style={styles.tabBarInfoContainer}>
+          <Text style={styles.tabBarInfoText}>Error, try refreshing again</Text>
+          <Text style={styles.tabBarInfoText}>{errorMessage}</Text>
+        </View>
+      )}
     </View>
   );
 }
@@ -99,20 +136,9 @@ const styles = StyleSheet.create({
     marginTop: 3,
     marginLeft: -10
   },
-  getStartedContainer: {
+  centeredContainer: {
     alignItems: "center",
     marginHorizontal: 50
-  },
-  homeScreenFilename: {
-    marginVertical: 7
-  },
-  codeHighlightText: {
-    color: "rgba(96,100,109, 0.8)"
-  },
-  codeHighlightContainer: {
-    backgroundColor: "rgba(0,0,0,0.05)",
-    borderRadius: 3,
-    paddingHorizontal: 4
   },
   getStartedText: {
     fontSize: 17,
@@ -158,5 +184,21 @@ const styles = StyleSheet.create({
   findOutLinkText: {
     fontSize: 14,
     color: "#2e78b7"
+  },
+  lastUpdatedText: {
+    fontSize: 14
   }
 });
+
+function mapStateToProps(state) {
+  const { errorMessage, isError, isFetching, lastUpdated } = state;
+
+  const zone =
+    "zone" in state.carbonIntensityLatestData
+      ? state.carbonIntensityLatestData.zone
+      : null;
+
+  return { errorMessage, isError, isFetching, lastUpdated, zone };
+}
+
+export default connect(mapStateToProps)(HomeScreen);

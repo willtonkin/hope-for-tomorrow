@@ -2,18 +2,33 @@ import React from "react";
 import { Dimensions, StyleSheet, View, Text } from "react-native";
 import { connect } from "react-redux";
 
+function colorTemperature(carbonIntensity) {
+  return "grey";
+}
+
 function CarbonIntensity({ carbonIntensity }) {
   return (
-    <View style={styles.container}>
-      <Text>{carbonIntensity}g</Text>
+    <View
+      style={{
+        ...styles.container,
+        backgroundColor: colorTemperature(carbonIntensity)
+      }}
+    >
+      <Text style={styles.intensityText}>{carbonIntensity}g</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    paddingTop: 15
+    
+    borderRadius: 16,
+    padding: 16,
+    width: "auto",
+    justifyContent: "center",
+    alignItems: "center"},
+  intensityText: {
+    fontSize: 28
   }
 });
 
