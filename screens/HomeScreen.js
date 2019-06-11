@@ -10,6 +10,7 @@ import {
   View,
 } from 'react-native';
 
+import TestComponent from '../components/TestComponent';
 import { MonoText } from '../components/StyledText';
 
 export default function HomeScreen() {
@@ -27,6 +28,10 @@ export default function HomeScreen() {
             }
             style={styles.welcomeImage}
           />
+        </View>
+
+        <View>
+          <TestComponent/>
         </View>
 
         <View style={styles.getStartedContainer}>
